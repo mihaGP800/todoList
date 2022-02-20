@@ -1,61 +1,24 @@
 .App {
-    padding: 30px;
-    display: flex;
+  padding: 30px;
+  display: flex;
 }
 
 .App > div {
-    margin-right: 50px;
+  margin-right: 50px;
 }
 
-.task-completed {
-    opacity: 0.5;
-
+.error {
+  border: red 1px solid;
 }
 
-.task {
-    font-weight: bold;
+.error-message {
+  color: red;
 }
 
-.filter-header {
-    border-radius: 50%;
-    display: inline-block;
-    background-color: #517575;
-    margin-left: 20px;
-    padding: 5px;
-    font-size: 15px;
-    color: white;
-    min-width: 100px;
-    text-align: center;
+.active-filter {
+  background-color: aquamarine;
 }
 
-.button-active {
-    background-color: #517575;
-    color: white;
-    font-weight: bold;
-}
-
-.button-passive{
-    opacity: 0.5;
-}
-
-.taskList{
-    min-height: 100px;
-}
-
-.emptymessage{
-    font-size: 12px;
-    color: red;
-    min-height: 132px;
-}
-
-.errorMessage{
-    font-size: 12px;
-    color: red;
-
-
-}
-
-.input-error{
-    outline: none;
-    border: 2px solid red;
+.is-done {
+  opacity: 0.5;
 }
