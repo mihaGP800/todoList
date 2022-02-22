@@ -2,7 +2,7 @@ import React from 'react';
 import TodoListHeader from "./TodoListHeader";
 import TasksList from "./TasksList";
 import AddTaskForm from "./AddTaskForm";
-import ControlButtons from "./ControlButtons";
+// import ControlButtons from "./ControlButtons";
 import {FilterValuesType} from "./App";
 
 type TodoListPropsType = {
@@ -11,6 +11,8 @@ type TodoListPropsType = {
     removeTask: (taskID: string) => void
     changeFilter: (filter: FilterValuesType) => void
     addTask: (title: string) => void
+    filter: FilterValuesType
+    changeTaskStatus: (taskID: string, isDone: boolean) => void
 }
 
 export type TaskType = {
@@ -22,12 +24,13 @@ export type TaskType = {
 const TodoList = (props: TodoListPropsType) => {
     return (
         <div>
-            <TodoListHeader title={props.title}/>
+            <TodoListHeader title={props.title} filter={props.filter}/>
             <AddTaskForm addTask={props.addTask}/>
             <TasksList tasks={props.tasks} removeTask={props.removeTask}
-                // changeFilter={props.changeFilter}
+                       changeFilter={props.changeFilter} filter={props.filter}
+                       changeTaskStatus={props.changeTaskStatus}
             />
-            <ControlButtons changeFilter={props.changeFilter}/>
+            {/*<ControlButtons changeFilter={props.changeFilter} filter={props.filter}/>*/}
             {/*<div>*/}
             {/*    <input/>*/}
             {/*    <button>+</button>*/}

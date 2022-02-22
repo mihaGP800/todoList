@@ -1,10 +1,17 @@
 import React from 'react';
 import Task from "./Task";
 import {TaskType} from "./TodoList";
+import ControlButtons from "./ControlButtons";
+import {FilterValuesType} from "./App";
+
 
 type TasksListPropsType = {
     tasks: Array<TaskType>
     removeTask: (taskID: string) => void
+    changeFilter: (filter: FilterValuesType) => void
+    filter: FilterValuesType
+    changeTaskStatus: (taskID: string, isDone: boolean) => void
+
 }
 
 const TasksList = (props: TasksListPropsType) => {
@@ -14,23 +21,20 @@ const TasksList = (props: TasksListPropsType) => {
                 key={task.id}
                 {...task}
                 removeTask={props.removeTask}
+                changeTaskStatus={props.changeTaskStatus}
             />
         )
     })
+    const tasksList = tasksComponentsList.length
+        ? <ul className='taskList'>{tasksComponentsList}</ul>
+        : <div className='emptymessage'>{props.filter} tasksList is empty</div>
 
     return (
         <>
-            <ul>
-                {/*{props.tasks.map(task => <Task {...task}/>)}*/}
-
-                {tasksComponentsList}
-
-                {/*<Task {...props.tasks[0]} />*/}
-                {/*<Task {...props.tasks[1]} />*/}
-                {/*<Task {...props.tasks[2]} />*/}
-            </ul>
-
+            {tasksList}
+            <ControlButtons changeFilter={props.changeFilter} filter={props.filter}/>
         </>
+
     );
 };
 

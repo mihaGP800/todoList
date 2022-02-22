@@ -3,6 +3,7 @@ import {FilterValuesType} from "./App";
 
 type ControlButtonsType = {
     changeFilter: (filter: FilterValuesType) => void
+    filter: FilterValuesType
 }
 
 const ControlButtons = (props: ControlButtonsType) => {
@@ -13,9 +14,18 @@ const ControlButtons = (props: ControlButtonsType) => {
 
     return (
         <div>
-            <button onClick={onclickSetFilter("all")}>All</button>
-            <button onClick={onclickSetFilter("active")}>Active</button>
-            <button onClick={onclickSetFilter("completed")}>Completed</button>
+            <button
+                className={props.filter === 'all' ? 'button-active' : 'button-passive'}
+                onClick={onclickSetFilter("all")}>All
+            </button>
+            <button
+                className={props.filter === 'active' ? 'button-active' : 'button-passive'}
+                onClick={onclickSetFilter("active")}>Active
+            </button>
+            <button
+                className={props.filter === 'completed' ? 'button-active' : 'button-passive'}
+                onClick={onclickSetFilter("completed")}>Completed
+            </button>
         </div>
     );
 };

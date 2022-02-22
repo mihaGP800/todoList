@@ -25,10 +25,14 @@ function App() {
         // const updatedTasks = [newTask, ...tasks]
         // setTasks(updatedTasks)
         // setTasks([{id: v1(), title: title, isDone: false}, ...tasks])
-        if (title !== '') {
-            setTasks([{id: v1(), title, isDone: false}, ...tasks])
-        }
+        setTasks([{id: v1(), title, isDone: false}, ...tasks])
+
     }
+
+    const changeTaskStatus = (taskID: string, isDone: boolean) => {
+        setTasks(tasks.map(t => t.id === taskID ? {...t, isDone: isDone} : t))
+    }
+
     const [filter, setFilter] = useState<FilterValuesType>("all")
 
     const changeFilter = (filter: FilterValuesType) => {
@@ -48,6 +52,10 @@ function App() {
 
     const filteredTasksForRender = getFilterTasksForRender()
 
+    // if (!filteredTasksForRender.length){
+    //     changeFilter('all')
+    // }
+
     return (
         <div className="App">
             <TodoList title={'What to learn'}
@@ -55,6 +63,8 @@ function App() {
                       removeTask={removeTask}
                       changeFilter={changeFilter}
                       addTask={addTask}
+                      filter={filter}
+                      changeTaskStatus={changeTaskStatus}
             />
             {/*<TodoList title={'What to game'} tasks={tasks_2}/>*/}
             {/*<TodoList title={'What to ride'} tasks={tasks_3}/>*/}
