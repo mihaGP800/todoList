@@ -1,17 +1,16 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
 
-type AddItemFormType = {
-    callBack: (title: string) => void
+type InputBlockType = {
+    callBack:(newTitle:string)=>void
 }
-
-export const AddItemForm: React.FC<AddItemFormType> = ({...props}) => {
+export const InputBlock:React.FC<InputBlockType> = ({callBack}) => {
     let [title, setTitle] = useState("")
     let [error, setError] = useState<string | null>(null)
 
     const addTask = () => {
         let newTitle = title.trim();
         if (newTitle !== "") {
-            props.callBack(newTitle);
+            callBack(newTitle);
             setTitle("");
         } else {
             setError("Title is required");
