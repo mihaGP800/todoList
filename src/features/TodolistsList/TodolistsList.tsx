@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppRootStateType } from '../../app/store'
+import React, {useCallback, useEffect} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import {AppRootStateType, useAppSelector} from '../../app/store'
 import {
     addTodolistTC,
     changeTodolistFilterAC,
@@ -10,12 +10,13 @@ import {
     removeTodolistTC,
     TodolistDomainType
 } from './todolists-reducer'
-import { addTaskTC, removeTaskTC, TasksStateType, updateTaskTC } from './tasks-reducer'
-import { TaskStatuses } from '../../api/todolists-api'
+import {addTaskTC, removeTaskTC, TasksStateType, updateTaskTC} from './tasks-reducer'
+import {TaskStatuses} from '../../api/todolists-api'
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import { AddItemForm } from '../../components/AddItemForm/AddItemForm'
-import { Todolist } from './Todolist/Todolist'
+import {AddItemForm} from '../../components/AddItemForm/AddItemForm'
+import {Todolist} from './Todolist/Todolist'
+import {Navigate, useNavigate} from 'react-router-dom';
 
 type PropsType = {
     demo?: boolean
@@ -24,15 +25,17 @@ type PropsType = {
 export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
     const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
     const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
+
+    const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
+
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     useEffect(() => {
-        if (demo) {
-            return;
-        }
-        const thunk = fetchTodolistsTC()
-        dispatch(thunk)
-    }, [])
+        if (isLoggedIn) {
+            dispatch(fetchTodolistsTC())
+        } else navigate('/login')
+    }, [isLoggedIn])
 
     const removeTask = useCallback(function (id: string, todolistId: string) {
         const thunk = removeTaskTC(id, todolistId)
