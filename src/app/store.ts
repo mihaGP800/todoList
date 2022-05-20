@@ -5,9 +5,9 @@ import {
 } from '../features/TodolistsList/todolists-reducer';
 import { applyMiddleware, combineReducers, createStore } from 'redux'
 import thunkMiddleware, { ThunkAction } from 'redux-thunk'
-import { appReducer } from './app-reducer'
+import {AppActionsType, appReducer} from './app-reducer'
 import {TypedUseSelectorHook, useSelector } from 'react-redux';
-import {authReducer} from '../features/Login/auth-reducer';
+import {AuthActionsType, authReducer} from '../features/Login/auth-reducer';
 
 // объединяя reducer-ы с помощью combineReducers,
 // мы задаём структуру нашего единственного объекта-состояния
@@ -26,13 +26,13 @@ export type AppRootStateType = ReturnType<typeof rootReducer>
 export const useAppSelector: TypedUseSelectorHook<AppRootStateType> = useSelector
 
 
-type AppActionsType = TodosActionsType | TasksActionsType
+type ProjectActionsType = TodosActionsType | TasksActionsType | AppActionsType | AuthActionsType
 
 export type AppThunk<ReturnType = void> = ThunkAction<
     ReturnType,
     AppRootStateType,
     unknown,
-    AppActionsType
+    ProjectActionsType
     >
 
 // а это, чтобы можно было в консоли браузера обращаться к store в любой момент

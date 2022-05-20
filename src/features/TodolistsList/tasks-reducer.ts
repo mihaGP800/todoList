@@ -1,4 +1,9 @@
-import { AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType } from './todolists-reducer'
+import {
+    AddTodolistActionType,
+    RemoveTodolistActionType,
+    ResetTodolistsActionType,
+    SetTodolistsActionType
+} from './todolists-reducer'
 import { TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType } from '../../api/todolists-api'
 import { Dispatch } from 'redux'
 import { AppRootStateType } from '../../app/store'
@@ -34,6 +39,8 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Tasks
         }
         case 'SET-TASKS':
             return {...state, [action.todolistId]: action.tasks}
+        case 'RESET-TODOLISTS':
+            return state = initialState
         default:
             return state
     }
@@ -142,4 +149,7 @@ export type TasksActionsType =
     | RemoveTodolistActionType
     | SetTodolistsActionType
     | ReturnType<typeof setTasksAC>
+    | ResetTodolistsActionType
+
+
 type ThunkDispatch = Dispatch<TasksActionsType | SetAppStatusActionType | SetAppErrorActionType>
