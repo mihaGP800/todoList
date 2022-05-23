@@ -68,7 +68,7 @@ export const setTodolistsAC = (todolists: Array<TodolistType>) => ({
     type: 'SET-TODOLISTS',
     todolists
 } as const)
-export const resetTodolistsAC = () => ({type: 'RESET-TODOLISTS'}as const)
+export const resetTodolistsAC = () => ({type: 'RESET-TODOLISTS'} as const)
 
 // thunks
 export const fetchTodolistsTC = (): AppThunk => {
