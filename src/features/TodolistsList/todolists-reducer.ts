@@ -1,7 +1,10 @@
 import {todolistsAPI, TodolistType} from '../../api/todolists-api'
 import {Dispatch} from 'redux'
 import {setErrorAC, setStatusAC} from '../../app/app-reducer';
-import {AppThunk} from '../../app/store';
+import {AppRootStateType, AppThunk} from '../../app/store';
+import {truncate} from 'fs';
+import { AxiosError } from 'axios';
+import {handleServerAppError, handleServerNetworkError} from '../../utils/error-utils';
 
 const initialState: Array<TodolistDomainType> = []
 
@@ -10,7 +13,7 @@ export const todolistsReducer = (state: Array<TodolistDomainType> = initialState
         case 'REMOVE-TODOLIST':
             return state.filter(tl => tl.id !== action.id)
         case 'ADD-TODOLIST':
-            return [{...action.todolist, filter: 'all'}, ...state]
+            return [{...action.todolist, filter: 'all', isDisabled: false}, ...state]
         case 'CHANGE-TODOLIST-TITLE':
             return state.map(tl => tl.id === action.id ? {
                 ...tl,
@@ -22,7 +25,10 @@ export const todolistsReducer = (state: Array<TodolistDomainType> = initialState
                 filter: action.filter
             } : tl)
         case 'SET-TODOLISTS':
-            return action.todolists.map(tl => ({...tl, filter: 'all'}))
+            return action.todolists.map(tl => ({...tl, filter: 'all', isDisabled: false}))
+        case 'TODOS/SET-DISABLED':
+            return state.map(tl => tl.id === action.payload.id
+                ? {...tl, isDisabled: action.payload.isDisabled} : tl)
         default:
             return state
     }
@@ -48,6 +54,10 @@ export const setTodolistsAC = (todolists: Array<TodolistType>) => ({
     type: 'SET-TODOLISTS',
     todolists
 } as const)
+export const setDisabledAC = (id: string, isDisabled: boolean) => ({
+    type: 'TODOS/SET-DISABLED',
+    payload: {id, isDisabled}
+} as const)
 
 // thunks
 export const fetchTodolistsTC = (): AppThunk => {
@@ -60,12 +70,35 @@ export const fetchTodolistsTC = (): AppThunk => {
             })
     }
 }
-export const removeTodolistTC = (todolistId: string) => {
-    return (dispatch: Dispatch<TodosActionsType>) => {
+
+enum ResultCodeStatuses {
+    success = 0,
+    someError = 1,
+    captcha = 10
+}
+
+
+export const removeTodolistTC = (todolistId: string): AppThunk => {
+    return (dispatch) => {
+        dispatch(setStatusAC('loading'))
+        dispatch(setDisabledAC(todolistId, true))
         todolistsAPI.deleteTodolist(todolistId)
             .then((res) => {
-                dispatch(removeTodolistAC(todolistId))
+                if (res.data.resultCode === ResultCodeStatuses.success) {
+                    dispatch(removeTodolistAC(todolistId))
+                    dispatch(setStatusAC('succeeded'))
+                } else {
+                    dispatch(setErrorAC(res.data.messages.length
+                        ? res.data.messages[0]
+                        : 'Some error occurred'))
+                    dispatch(setStatusAC('failed'))
+                }
             })
+            .catch((err: AxiosError) => {
+                dispatch(setErrorAC(err.message))
+                dispatch(setStatusAC('idle'))
+            })
+            // .finally(() => dispatch(setStatusAC('idle')))
     }
 }
 export const addTodolistTC = (title: string): AppThunk => {
@@ -75,33 +108,53 @@ export const addTodolistTC = (title: string): AppThunk => {
             .then((res) => {
                 if (res.data.resultCode === 0) {
                     dispatch(addTodolistAC(res.data.data.item))
+                    dispatch(setStatusAC('succeeded'))
                 } else {
-                    dispatch(setErrorAC(res.data.messages[0]))
+                    handleServerAppError(dispatch, res.data)
                 }
-                dispatch(setStatusAC('succeeded'))
+            })
+            .catch((err: AxiosError) => {
+                handleServerNetworkError(dispatch, err.message)
             })
     }
 }
-export const changeTodolistTitleTC = (id: string, title: string) => {
-    return (dispatch: Dispatch<TodosActionsType>) => {
+export const changeTodolistTitleTC = (id: string, title: string): AppThunk => {
+    return (dispatch) => {
+        dispatch(setStatusAC('loading'))
+        dispatch(setDisabledAC(id, true))
         todolistsAPI.updateTodolist(id, title)
             .then((res) => {
-                dispatch(changeTodolistTitleAC(id, title))
+                if (res.data.resultCode === 0) {
+                    dispatch(changeTodolistTitleAC(id, title))
+                    dispatch(setStatusAC('succeeded'))
+                } else {
+                    handleServerAppError(dispatch, res.data)
+                }
+                dispatch(setDisabledAC(id, false))
+            })
+            .catch((err: AxiosError) => {
+                handleServerNetworkError(dispatch, err.message)
             })
     }
 }
+
 
 // types
 export type AddTodolistActionType = ReturnType<typeof addTodolistAC>;
 export type RemoveTodolistActionType = ReturnType<typeof removeTodolistAC>;
 export type SetTodolistsActionType = ReturnType<typeof setTodolistsAC>;
+
 export type TodosActionsType =
     | RemoveTodolistActionType
     | AddTodolistActionType
     | ReturnType<typeof changeTodolistTitleAC>
     | ReturnType<typeof changeTodolistFilterAC>
+    | ReturnType<typeof setDisabledAC>
     | SetTodolistsActionType
+
+
 export type FilterValuesType = 'all' | 'active' | 'completed';
 export type TodolistDomainType = TodolistType & {
     filter: FilterValuesType
+    isDisabled: boolean
 }

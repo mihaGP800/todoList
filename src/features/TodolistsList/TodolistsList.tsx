@@ -94,6 +94,7 @@ export const TodolistsList: React.FC = () => {
                                 removeTodolist={removeTodolist}
                                 changeTaskTitle={changeTaskTitle}
                                 changeTodolistTitle={changeTodolistTitle}
+                                isDisabled={tl.isDisabled}
                             />
                         </Paper>
                     </Grid>
