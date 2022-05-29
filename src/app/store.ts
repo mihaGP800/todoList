@@ -1,13 +1,13 @@
 import {TasksActionsType, tasksReducer} from '../features/TodolistsList/tasks-reducer';
 import {
-    TodosActionsType,
-    todolistsReducer
+    todolistsReducer,
+    TodosActionsType
 } from '../features/TodolistsList/todolists-reducer';
-import {applyMiddleware, combineReducers, compose, createStore} from 'redux'
+import {combineReducers} from 'redux'
 import thunkMiddleware, {ThunkAction} from 'redux-thunk'
-import {AppActionsType, appReducer} from './app-reducer'
+import {appReducer} from './app-reducer'
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
-import {AuthActionsType, authReducer} from '../features/Login/auth-reducer';
+import {authReducer} from '../features/Login/auth-reducer';
 import {configureStore} from '@reduxjs/toolkit';
 
 // объединяя reducer-ы с помощью combineReducers,
@@ -42,8 +42,8 @@ export const useAppSelector: TypedUseSelectorHook<AppRootStateType> = useSelecto
 type ProjectActionsType =
     TodosActionsType
     | TasksActionsType
-    | AppActionsType
-    | AuthActionsType
+    // | AppActionsType
+    // | AuthActionsType
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType,
     AppRootStateType,
