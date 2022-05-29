@@ -3,7 +3,7 @@ import {
     TodosActionsType,
     todolistsReducer
 } from '../features/TodolistsList/todolists-reducer';
-import { applyMiddleware, combineReducers, createStore } from 'redux'
+import { applyMiddleware, combineReducers, compose, createStore } from 'redux'
 import thunkMiddleware, { ThunkAction } from 'redux-thunk'
 import {AppActionsType, appReducer} from './app-reducer'
 import {TypedUseSelectorHook, useSelector } from 'react-redux';
@@ -18,7 +18,10 @@ const rootReducer = combineReducers({
     auth: authReducer
 })
 // непосредственно создаём store
-export const store = createStore(rootReducer, applyMiddleware(thunkMiddleware));
+//@ts-ignore
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunkMiddleware)));
 // определить автоматически тип всего объекта состояния
 export type AppRootStateType = ReturnType<typeof rootReducer>
 
