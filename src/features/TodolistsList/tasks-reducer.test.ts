@@ -188,7 +188,7 @@ test('add empty array tasks for each todoList when it was set', () => {
         },
         {
             id: 'todolistId4',
-            title: 'SUPER ToDo',
+            title: 'SUPER TD',
             addedDate: '',
             order: 2,
         },
