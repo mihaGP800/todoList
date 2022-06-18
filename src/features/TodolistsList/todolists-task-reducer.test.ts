@@ -1,4 +1,4 @@
-import {addTodolistAC, TodolistDomainType, todolistsReducer} from './todolists-reducer';
+import {addTodolistTC, TodolistDomainType, todolistsReducer} from './todolists-reducer';
 import {tasksReducer, TasksStateType} from './tasks-reducer';
 
 test('ids should be equals', () => {
@@ -12,9 +12,9 @@ test('ids should be equals', () => {
         order: 0,
     }
 
-    const andTodoLists = todolistsReducer(startTodoLists, addTodolistAC({todolist: newTodoList}))
+    const andTodoLists = todolistsReducer(startTodoLists, addTodolistTC.fulfilled({todolist: newTodoList}, 'requestId', newTodoList.title))
 
-    const endTasks = tasksReducer(startTasks, addTodolistAC({todolist: newTodoList}))
+    const endTasks = tasksReducer(startTasks, addTodolistTC.fulfilled({todolist: newTodoList}, 'requestId', newTodoList.title))
 
     expect(andTodoLists.filter(tl => tl.id === newTodoList.id)[0].id).toBe('todolistId3')
 

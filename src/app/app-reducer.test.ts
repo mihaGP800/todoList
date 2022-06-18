@@ -1,17 +1,17 @@
 import {
     appReducer,
-    initialState,
+    initializeAppTC,
+    RequestStatusType,
     setAppErrorAC,
-    setAppIsInitializedAC,
     setAppStatusAC
 } from './app-reducer';
 
-let startState: typeof initialState
+let startState: { status: RequestStatusType; error: string | null; isInitialized: boolean; }
 beforeEach(() => {
     startState = {
-        status: 'idle',
-        error: null,
-        isInitialized: false,
+        status: 'idle' as RequestStatusType,
+        error: null as string | null,
+        isInitialized: false
     }
 })
 
@@ -28,7 +28,7 @@ test('correct status message should be set', () => {
 })
 
 test('correct initialized message should be set', () => {
-    const andState = appReducer(startState, setAppIsInitializedAC({isInitialized: true}))
+    const andState = appReducer(startState, initializeAppTC.fulfilled(undefined, 'requestId'))
 
     expect(andState.isInitialized).toBe(true)
 })
