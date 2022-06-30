@@ -1,6 +1,5 @@
-import {Dispatch} from 'redux'
 import {setAppStatusAC} from '../../app/app-reducer'
-import {authAPI, FieldErr, LoginParamsType, todolistsAPI} from '../../api/todolists-api';
+import {authAPI, FieldErr, LoginParamsType} from '../../api/todolists-api';
 import {handleServerAppError, handleServerNetworkError} from '../../utils/error-utils';
 import {resetTodolistsAC} from '../TodolistsList/todolists-reducer';
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
@@ -77,35 +76,6 @@ export const logoutTC = createAsyncThunk('auth/logout', async (arg, thunkAPI) =>
     }
 })
 
-export const _loginTC = (data: LoginParamsType) => (dispatch: Dispatch) => {
-    dispatch(setAppStatusAC({status: 'loading'}))
-    authAPI.login(data).then(res => {
-        if (res.data.resultCode === 0) {
-            dispatch(setIsLoggedInAC({value: true}))
-            dispatch(setAppStatusAC({status: 'succeeded'}))
-        } else {
-            handleServerAppError(res.data, dispatch)
-        }
-    })
-        .catch((error) => {
-            handleServerNetworkError(error, dispatch)
-        })
-}
-export const _logoutTC = () => (dispatch: Dispatch) => {
-    dispatch(setAppStatusAC({status: 'loading'}))
-    authAPI.logout().then(res => {
-        if (res.data.resultCode === 0) {
-            dispatch(setIsLoggedInAC({value: false}))
-            dispatch(setAppStatusAC({status: 'succeeded'}))
-            dispatch(resetTodolistsAC())
-        } else {
-            handleServerAppError(res.data, dispatch)
-        }
-    })
-        .catch((error) => {
-            handleServerNetworkError(error, dispatch)
-        })
-}
 
 
 

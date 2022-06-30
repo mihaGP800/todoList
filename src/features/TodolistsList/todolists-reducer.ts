@@ -1,5 +1,4 @@
 import {todolistsAPI, TodolistType} from '../../api/todolists-api'
-import {Dispatch} from 'redux'
 import {RequestStatusType, setAppStatusAC,} from '../../app/app-reducer'
 import {fetchTasksTC} from './tasks-reducer';
 import {handleServerAppError, handleServerNetworkError} from '../../utils/error-utils';
@@ -80,7 +79,6 @@ export const fetchTodolistsTC = createAsyncThunk('todolists/fetchTodolists', asy
 
         const todos = await res.data
         todos.forEach(todo => dispatch(fetchTasksTC(todo.id)))
-        console.log(res.data)
         return {todolists: res.data}
 
     } catch (error: any) {

@@ -1,6 +1,5 @@
-import {Dispatch} from 'redux';
 import {authAPI} from '../api/todolists-api';
-import {setIsLoggedInAC} from '../features/Login/auth-reducer';
+import {setIsLoggedInAC} from '../features';
 import {handleServerAppError, handleServerNetworkError} from '../utils/error-utils';
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 

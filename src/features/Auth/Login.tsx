@@ -12,6 +12,7 @@ import {loginTC} from './auth-reducer';
 import {useAppDispatch, useAppSelector} from '../../app/store';
 import {Navigate} from 'react-router-dom';
 import {LoginParamsType} from '../../api/todolists-api';
+import {selectIsLoggedIn} from './selectors';
 
 type FormValues = {
     email: string
@@ -22,7 +23,7 @@ type FormValues = {
 export const Login = () => {
     const dispatch = useAppDispatch()
 
-    const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
+    const isLoggedIn = useAppSelector(selectIsLoggedIn)
 
     const formik = useFormik({
         initialValues: {
