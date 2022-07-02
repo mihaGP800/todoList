@@ -21,12 +21,11 @@ import {TodolistsList} from '../features/TodolistsList';
 import {Login} from '../features/Auth/Login';
 
 type PropsType = {
-    demo?: boolean
 }
 
 
 
-function App({demo = false}: PropsType) {
+function App(props: PropsType) {
     const status = useAppSelector(selectStatus)
     const isInitialized = useAppSelector(selectIsInitialized)
     const isLoggedIn = useAppSelector(selectIsLoggedIn)
@@ -64,7 +63,7 @@ function App({demo = false}: PropsType) {
             </AppBar>
             <Container fixed>
                 <Routes>
-                    <Route path="/" element={<TodolistsList demo={demo}/>}/>
+                    <Route path="/" element={<TodolistsList/>}/>
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/404"
                            element={<h1 style={{textAlign: 'center'}}>404: PAGE NOT

@@ -1,27 +1,34 @@
-import {combineReducers} from 'redux'
 import thunkMiddleware from 'redux-thunk'
-import {appReducer} from './app-reducer'
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 import {configureStore} from '@reduxjs/toolkit';
-import {authReducer} from '../features/Auth/auth-reducer';
-import {tasksReducer} from '../features/TodolistsList/tasks-reducer';
-import {todolistsReducer} from '../features/TodolistsList/todolists-reducer';
+import {rootReducer} from './rootReducer';
 
 
-const rootReducer = combineReducers({
-    tasks: tasksReducer,
-    todolists: todolistsReducer,
-    app: appReducer,
-    auth: authReducer
-})
+// export const store = configureStore({
+//     reducer: rootReducer,
+//     middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(thunkMiddleware)
+// })
+
+export default function configureAppStore(preloadedState?: AppRootStateType) {
+    const store = configureStore({
+        reducer: rootReducer,
+        middleware: (getDefaultMiddleware) =>
+            getDefaultMiddleware().prepend(thunkMiddleware),
+        preloadedState,
+        // enhancers: [monitorReducersEnhancer],
+    })
 
 
-export const store = configureStore({
-    reducer: rootReducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(thunkMiddleware)
-})
 
-export type AppDispatch = typeof store.dispatch
+    if (process.env.NODE_ENV !== 'development' && module.hot) {
+        module.hot.accept('./rootReducer', () => store.replaceReducer(rootReducer))
+    }
+
+    return store
+}
+
+// export type AppDispatch = typeof store.dispatch
+export type AppDispatch = ReturnType<typeof configureAppStore>['dispatch']
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 
 export type AppRootStateType = ReturnType<typeof rootReducer>
@@ -30,4 +37,4 @@ export const useAppSelector: TypedUseSelectorHook<AppRootStateType> = useSelecto
 
 
 // @ts-ignore
-window.store = store;
+// window.store = store;

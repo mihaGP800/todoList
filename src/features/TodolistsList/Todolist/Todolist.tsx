@@ -19,7 +19,6 @@ type PropsType = {
     removeTask: (taskId: string, todolistId: string) => void
     removeTodolist: (id: string) => void
     changeTodolistTitle: (id: string, newTitle: string) => void
-    demo?: boolean
 }
 
 type colorType =
@@ -31,8 +30,7 @@ type colorType =
     | 'info'
     | 'warning'
 
-export const Todolist = React.memo(function ({demo = false, ...props}: PropsType) {
-
+export const Todolist = React.memo(function (props: PropsType) {
     const addTask = useCallback((title: string) => {
         props.addTask(title, props.todolist.id)
     }, [props.addTask, props.todolist.id])
@@ -74,6 +72,7 @@ export const Todolist = React.memo(function ({demo = false, ...props}: PropsType
             <h3><EditableSpan value={props.todolist.title}
                               onChange={changeTodolistTitle}/></h3>
             <IconButton onClick={removeTodolist}
+                        size={'small'}
                         disabled={props.todolist.entityStatus === 'loading'}
                         style={{position: "absolute", top: '0', right: '0'}}>
                 <Delete/>

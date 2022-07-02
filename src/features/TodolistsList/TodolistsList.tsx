@@ -20,11 +20,9 @@ import {selectIsLoggedIn} from '../Auth';
 import {selectTasks, selectTodolists} from './selectors';
 
 type PropsType = {
-    demo?: boolean
 }
 
-export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
-
+export const TodolistsList: React.FC<PropsType> = () => {
     const todolists = useAppSelector(selectTodolists)
     const tasks = useAppSelector(selectTasks)
     const isLoggedIn = useAppSelector(selectIsLoggedIn)
@@ -75,7 +73,7 @@ export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
         <Grid container style={{padding: '20px'}}>
             <AddItemForm addItem={addTodolist}/>
         </Grid>
-        <Grid container spacing={5} style={{flexWrap: 'nowrap', overflowX: 'scroll'}}>
+        <Grid container spacing={5}>
             {todolists.map(tl => {
                 let allTodolistTasks = tasks[tl.id]
 
@@ -88,8 +86,7 @@ export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
                                  changeTaskStatus={changeStatus}
                                  removeTodolist={removeTodolist}
                                  changeTaskTitle={changeTaskTitle}
-                                 changeTodolistTitle={changeTodolistTitle}
-                                 demo={demo}/>
+                                 changeTodolistTitle={changeTodolistTitle}/>
             })
             }
         </Grid>
