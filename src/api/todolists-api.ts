@@ -62,7 +62,7 @@ export type TodolistType = {
     order: number
 }
 
-type MeResponseType = { id: number, email: string, login: string }
+export type MeResponseType = { id: number, email: string, login: string }
 
 export type ResponseType<D = {}> = {
     resultCode: number
@@ -107,7 +107,7 @@ export type UpdateTaskModelType = {
     startDate: string
     deadline: string
 }
-type GetTasksResponse = {
+export type GetTasksResponse = {
     error: string | null
     totalCount: number
     items: TaskType[]

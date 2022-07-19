@@ -9,10 +9,10 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import {useFormik} from 'formik';
 import {useDispatch} from 'react-redux';
-import {loginTC} from './auth-reducer';
 import {useAppSelector} from '../../app/store';
 import {Navigate} from 'react-router-dom';
 import {LoginParamsType} from '../../api/todolists-api';
+import { login } from './auth-reducer';
 
 type FormikErrorType = {
     email?: string
@@ -51,7 +51,7 @@ export const Login = () => {
 
         onSubmit: values => {
             // alert(JSON.stringify(values))
-            dispatch(loginTC(values))
+            dispatch(login(values))
 
             formik.resetForm()
         },

@@ -1,7 +1,8 @@
-import {Dispatch} from 'redux';
-import {authAPI} from '../api/todolists-api';
+import {authAPI, MeResponseType, ResponseType} from '../api/todolists-api';
 import {setIsLoggedInAC} from '../features/Login/auth-reducer';
 import {handleServerAppError, handleServerNetworkError} from '../utils/error-utils';
+import {AxiosError, AxiosResponse} from 'axios';
+import {call, put, takeEvery} from 'redux-saga/effects';
 
 const initialState: InitialStateType = {
     status: 'idle',
@@ -47,22 +48,49 @@ export const setAppIsInitializedAC = (isInitialized: boolean) => ({
 export type SetAppErrorActionType = ReturnType<typeof setAppErrorAC>
 export type SetAppStatusActionType = ReturnType<typeof setAppStatusAC>
 
-export const initializeAppTC = () => (dispatch: Dispatch) => {
-    dispatch(setAppStatusAC('loading'))
-    authAPI.me()
-        .then(res => {
-            if (res.data.resultCode === 0) {
-                dispatch(setIsLoggedInAC(true));
-                dispatch(setAppStatusAC('succeeded'))
-            } else {
-                handleServerAppError(res.data, dispatch);
-            }
-        })
-        .catch((error) => {
-            handleServerNetworkError(error, dispatch)
-        })
-        .finally(() => dispatch(setAppIsInitializedAC(true)))
+
+// saga
+export function* initializeAppWorkerSaga() {
+    yield put(setAppStatusAC('loading'))
+    const res: AxiosResponse<ResponseType<MeResponseType>> = yield call(authAPI.me)
+    try {
+        if (res.data.resultCode === 0) {
+            yield put(setIsLoggedInAC(true));
+            yield put(setAppStatusAC('succeeded'))
+        } else {
+            handleServerAppError(res.data, yield put);
+        }
+    } catch (error) {
+        handleServerNetworkError(error as AxiosError, yield put)
+    } finally {
+        yield put(setAppIsInitializedAC(true))
+    }
 }
+
+// action for saga
+export const initializeApp = () => ({type: 'APP/INITIALIZED-APP'})
+
+export function* appWatcher() {
+    yield takeEvery('APP/INITIALIZED-APP', initializeAppWorkerSaga)
+}
+
+// thunk
+// export const initializeAppTC = (): AppThunk => async dispatch => {
+//     dispatch(setAppStatusAC('loading'))
+//     const res = await authAPI.me()
+//     try {
+//         if (res.data.resultCode === 0) {
+//             dispatch(setIsLoggedInAC(true));
+//             dispatch(setAppStatusAC('succeeded'))
+//         } else {
+//             handleServerAppError(res.data, dispatch);
+//         }
+//     } catch (error) {
+//         handleServerNetworkError(error as AxiosError, dispatch)
+//     } finally {
+//         dispatch(setAppIsInitializedAC(true))
+//     }
+// }
 
 
 export type AppActionsType =
