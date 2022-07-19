@@ -20,7 +20,7 @@ export default function configureAppStore(preloadedState?: AppRootStateType) {
 
 
 
-    if (process.env.NODE_ENV !== 'development' && module.hot) {
+    if (process.env.NODE_ENV !== 'production' && module.hot) {
         module.hot.accept('./rootReducer', () => store.replaceReducer(rootReducer))
     }
 

@@ -12,7 +12,6 @@ import {
 import {addTaskTC, removeTaskTC, updateTaskTC} from './tasks-reducer'
 import {TaskStatuses} from '../../api/todolists-api'
 import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
 import {AddItemForm} from '../../components/AddItemForm/AddItemForm'
 import {Todolist} from './Todolist/Todolist'
 import {useNavigate} from 'react-router-dom';
