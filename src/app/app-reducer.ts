@@ -1,6 +1,10 @@
 import {authAPI, MeResponseType, ResponseType} from '../api/todolists-api';
 import {setIsLoggedInAC} from '../features/Login/auth-reducer';
-import {handleServerAppError, handleServerNetworkError} from '../utils/error-utils';
+import {
+    handleServerAppError,
+    handleServerAppErrorSaga,
+    handleServerNetworkError, handleServerNetworkErrorSaga
+} from '../utils/error-utils';
 import {AxiosError, AxiosResponse} from 'axios';
 import {call, put, takeEvery} from 'redux-saga/effects';
 
@@ -52,16 +56,16 @@ export type SetAppStatusActionType = ReturnType<typeof setAppStatusAC>
 // saga
 export function* initializeAppWorkerSaga() {
     yield put(setAppStatusAC('loading'))
-    const res: AxiosResponse<ResponseType<MeResponseType>> = yield call(authAPI.me)
+    const data: ResponseType<MeResponseType> = yield call(authAPI.me)
     try {
-        if (res.data.resultCode === 0) {
+        if (data.resultCode === 0) {
             yield put(setIsLoggedInAC(true));
             yield put(setAppStatusAC('succeeded'))
         } else {
-            handleServerAppError(res.data, yield put);
+            yield* handleServerAppErrorSaga(data);
         }
     } catch (error) {
-        handleServerNetworkError(error as AxiosError, yield put)
+        yield* handleServerNetworkErrorSaga(error as AxiosError)
     } finally {
         yield put(setAppIsInitializedAC(true))
     }
@@ -91,7 +95,6 @@ export function* appWatcher() {
 //         dispatch(setAppIsInitializedAC(true))
 //     }
 // }
-
 
 export type AppActionsType =
     | SetAppErrorActionType

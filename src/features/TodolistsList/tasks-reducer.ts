@@ -20,7 +20,11 @@ import {
     setAppStatusAC,
     SetAppStatusActionType
 } from '../../app/app-reducer'
-import {handleServerAppError, handleServerNetworkError} from '../../utils/error-utils'
+import {
+    handleServerAppError, handleServerAppErrorSaga,
+    handleServerNetworkError,
+    handleServerNetworkErrorSaga
+} from '../../utils/error-utils'
 import {call, put, select, takeEvery} from 'redux-saga/effects'
 import {AxiosError, AxiosResponse} from 'axios';
 
@@ -109,18 +113,16 @@ export const removeTask = (taskId: string, todolistId: string) =>
 export function* addTaskWorkerSaga(action: ReturnType<typeof addTask>) {
     const {title, todolistId} = action
     yield put(setAppStatusAC('loading'))
-    const res: AxiosResponse<ResponseType<{ item: TaskType }>> = yield call(todolistsAPI.createTask, todolistId, title)
+    const data: ResponseType<{ item: TaskType }> = yield call(todolistsAPI.createTask, todolistId, title)
     try {
-        if (res.data.resultCode === 0) {
-            const task = res.data.data.item
-            const action = addTaskAC(task)
-            yield put(action)
+        if (data.resultCode === 0) {
+            yield put(addTaskAC(data.data.item))
             yield put(setAppStatusAC('succeeded'))
         } else {
-            handleServerAppError(res.data, yield put);
+            yield* handleServerAppErrorSaga(data);
         }
     } catch (error) {
-        handleServerNetworkError(error as AxiosError, yield put)
+        yield* handleServerNetworkErrorSaga(error as AxiosError)
     }
 }
 
@@ -148,15 +150,15 @@ export function* updateTaskWorkerSaga(action: ReturnType<typeof updateTask>) {
         ...domainModel
     }
 
-    const res: AxiosResponse<ResponseType<{ item: TaskType }>> = yield call(todolistsAPI.updateTask, todolistId, taskId, apiModel)
+    const data: ResponseType<{ item: TaskType }> = yield call(todolistsAPI.updateTask, todolistId, taskId, apiModel)
     try {
-        if (res.data.resultCode === 0) {
+        if (data.resultCode === 0) {
             yield put(updateTaskAC(taskId, domainModel, todolistId))
         } else {
-            handleServerAppError(res.data, yield put);
+            yield* handleServerAppErrorSaga(data);
         }
     } catch (error) {
-        handleServerNetworkError(error as AxiosError, yield put);
+        yield* handleServerNetworkErrorSaga(error as AxiosError)
     }
 }
 
